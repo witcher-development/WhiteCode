@@ -4,13 +4,13 @@ import Shop from './shop';
 import getData from './API';
 
 const initShop = (async () => {
-	const products = JSON.parse(localStorage.getItem('products')) || [];
-	const currentPage = localStorage.getItem('currentPage') || 0;
+	const cartProducts = JSON.parse(localStorage.getItem('cartProducts')) || {};
+	const currentPage = localStorage.getItem('currentPage') || 1;
 
-	const shop = new Shop(products, currentPage);
+	const shop = new Shop(cartProducts, currentPage);
 
-	const data = await getData();
-	shop.setProductsFromServer(data);
+	const data = await getData(currentPage);
+	shop.setCurrentPageProducts(data);
 
 	handleUserActions(shop);
 

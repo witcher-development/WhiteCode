@@ -1,10 +1,10 @@
 import { renderProducts, renderCart, renderNavigation } from './renderHelper';
 
 export default class Shop {
-	constructor(products, currentPage) {
+	constructor(cartProducts, currentPage) {
 
-		this._products = {};
-		this.setProductsFromLocalStorage(products);
+		this._currentPageProducts = {};
+		this._cartProducts = cartProducts;
 
 		this._currentPage	= currentPage;
 
@@ -12,47 +12,30 @@ export default class Shop {
 	}
 
 	render() {
-		renderProducts(this.products);
-		renderCart(this.products.filter(p => p.inCart), this.totalPrice);
+		renderProducts(this.currentPageProducts);
+		renderCart(this.cartProducts, this.totalPrice);
 		renderNavigation(this.currentPage);
 	}
 
-	setProductsFromLocalStorage(products) {
+	setCurrentPageProducts(products) {
+		const _cartProducts = this._cartProducts;
 		let newProducts = {};
 
 		products.forEach(product => {
 			newProducts[product.id] = {
 				...product,
-				count: product.count,
-				inCart: product.inCart,
+				count: _cartProducts[product.id] ? _cartProducts[product.id].count : 0,
 			}
 		});
 
-		this._products = newProducts;
-
-		this.render();
-	}
-
-	setProductsFromServer(products) {
-		const _products = this._products;
-		let newProducts = {};
-
-		products.forEach(product => {
-			newProducts[product.id] = {
-				...product,
-				count: _products[product.id] ? _products[product.id].count : 0,
-				inCart: _products[product.id] ? _products[product.id].inCart : false,
-			}
-		});
-
-		this._products = newProducts;
+		this._currentPageProducts = newProducts;
 
 		this.render();
 	}
 
 	addProductToCart(id) {
-		this._products[id].count = this._products[id].count + 1;
-		this._products[id].inCart = true;
+		this._currentPageProducts[id].count++;
+		this._cartProducts[id].count++;
 
 		this.render();
 	}
@@ -64,12 +47,16 @@ export default class Shop {
 		this.render();
 	}
 
-	get products() {
-		return Object.values(this._products);
+	get currentPageProducts() {
+		return Object.values(this._currentPageProducts);
+	}
+
+	get cartProducts() {
+		return Object.values(this._cartProducts);
 	}
 
 	get totalPrice() {
-		return this.products.filter(p => p.inCart).map(p => p.price * p.count).reduce((a, value) => a + value, 0);
+		return this.currentPageProducts.map(p => p.price * p.count).reduce((a, value) => a + value, 0);
 	}
 
 	get currentPage() {
