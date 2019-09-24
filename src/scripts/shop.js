@@ -1,66 +1,78 @@
-import { renderProducts, renderSidebarProducts, renderCart } from './renderHelper';
+import { renderProducts, renderCart, renderNavigation } from './renderHelper';
 
 export default class Shop {
-	constructor(page) {
+	constructor(products, currentPage) {
 
-		this.products = [];
-		this.page	= page;
-		this.cart = {
-			products: {},
-			result: 0,
-		};
+		this._products = {};
+		this.setProductsFromLocalStorage(products);
 
-		this.init();
+		this._currentPage	= currentPage;
+
+		this.render();
 	}
 
-	init() {
-		this._products = [];
-		this._cart = {
-			products: {},
-			result: 0,
-		};
-		renderProducts([]);
-		renderSidebarProducts([]);
+	render() {
+		renderProducts(this.products);
+		renderCart(this.products.filter(p => p.inCart), this.totalPrice);
+		renderNavigation(this.currentPage);
 	}
 
-	set cart(products) {
-
-		if (products.products !== undefined && products.result !== undefined) return;
-
-		const cart = {
-			products: {},
-			result: 0,
-		};
+	setProductsFromLocalStorage(products) {
+		let newProducts = {};
 
 		products.forEach(product => {
-			if (Object.keys(cart.products).indexOf(product.id) > -1) {
-				cart.products[product.id].count++;
-			} else {
-				const newProduct = {
-					...product,
-					count: 1,
-				};
-				cart.products[product.id] = newProduct
+			newProducts[product.id] = {
+				...product,
+				count: product.count,
+				inCart: product.inCart,
 			}
 		});
 
-		console.log(cart);
+		this._products = newProducts;
 
-		this._cart = cart;
-		renderCart(cart);
+		this.render();
+	}
 
+	setProductsFromServer(products) {
+		const _products = this._products;
+		let newProducts = {};
+
+		products.forEach(product => {
+			newProducts[product.id] = {
+				...product,
+				count: _products[product.id] ? _products[product.id].count : 0,
+				inCart: _products[product.id] ? _products[product.id].inCart : false,
+			}
+		});
+
+		this._products = newProducts;
+
+		this.render();
+	}
+
+	addProductToCart(id) {
+		this._products[id].count = this._products[id].count + 1;
+		this._products[id].inCart = true;
+
+		this.render();
+	}
+
+	removeProduct(id) {
+		this._products[id].count = 0;
+		this._products[id].inCart = false;
+
+		this.render();
 	}
 
 	get products() {
-		return this._products;
+		return Object.values(this._products);
 	}
 
-	set products(products) {
-		this._products = products;
-		renderProducts(products);
+	get totalPrice() {
+		return this.products.filter(p => p.inCart).map(p => p.price * p.count).reduce((a, value) => a + value, 0);
 	}
 
 	get currentPage() {
-		return this.page;
+		return this._currentPage;
 	}
 }

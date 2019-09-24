@@ -12,8 +12,8 @@ const getProductTemplate = (product) => `
 			<div class="product__body_right">
 				<button class="product__button" data-product-id="${product.id}">Add to cart</button>
 				<p class="product__counter">
-					Added
-					<span class="product__counter-count">2</span>
+					Added: 
+					<span class="product__counter-count">${product.count}</span>
 				</p>
 			</div>
 		</div>
@@ -32,7 +32,7 @@ export const renderProducts = (products) => {
 
 	if (products.length) {
 		const productsTemplate = products.map(product => getProductTemplate(product));
-		listElement.innerHTML = productsTemplate;
+		listElement.innerHTML = productsTemplate.join('');
 	} else {
 		const emptyProductsTemplate = getEmptyProductTemplate();
 		listElement.innerHTML = emptyProductsTemplate;
@@ -46,7 +46,7 @@ const getSidebarProductTemplate = (product) => `
 		</div>
 		<div class="sidebar__item_right">
 			<h4 class="sidebar__item-title">${product.title}</h4>
-			<p class="sidebar__item-counter">${product.count}</p>
+			<p class="sidebar__item-counter">x${product.count}</p>
 		</div>
 		<div class="sidebar__item-remove" data-product-id="${product.id}"></div>
 	</li>
@@ -70,8 +70,12 @@ export const renderSidebarProducts = (products) => {
 	}
 };
 
-export const renderCart = (cart) => {
-	renderSidebarProducts(cart.products);
+export const renderCart = (products, totalPrice) => {
+	renderSidebarProducts(products);
 
-	document.querySelector('.sidebar__price').innerHTML = cart.result;
+	document.querySelector('.sidebar__price').innerHTML = totalPrice + '$';
+};
+
+export const renderNavigation = (currentPage) => {
+	document.querySelector('.nav__item').innerHTML = currentPage + 1;
 };

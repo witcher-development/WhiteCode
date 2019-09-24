@@ -3,19 +3,39 @@ import '../styles/index.scss';
 import Shop from './shop';
 import getData from './API';
 
-const drawShop = async () => {
-	const lastPage = localStorage.getItem('shopPage') || 0;
+const initShop = (async () => {
+	const products = JSON.parse(localStorage.getItem('products')) || [];
+	const currentPage = localStorage.getItem('currentPage') || 0;
+
+	const shop = new Shop(products, currentPage);
 
 	const data = await getData();
+	shop.setProductsFromServer(data);
 
-	const shop = new Shop(lastPage);
+	handleUserActions(shop);
 
-	shop.products = data;
-	shop.cart = data;
+})();
 
-	// console.log(getProductTemplate(data[0]));
+const handleUserActions = (shop) => {
+	document.addEventListener('click', (event) => {
 
-	return;
+		const target = event.target;
+
+		if (target.classList.contains('product__button')) { // add to cart
+			const id = target.getAttribute('data-product-id');
+
+			shop.addProductToCart(id);
+
+			const products = shop.products;
+			localStorage.setItem('products', JSON.stringify(products));
+
+		} else if (target.classList.contains('sidebar__item-remove')) { // remove from cart
+			const id = target.getAttribute('data-product-id');
+
+			shop.removeProduct(id);
+
+			const products = shop.products;
+			localStorage.setItem('products', JSON.stringify(products));
+		}
+	});
 };
-
-drawShop();

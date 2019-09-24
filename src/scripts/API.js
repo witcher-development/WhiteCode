@@ -4,7 +4,7 @@ const data = [
 		title: 'Стул 1',
 		image: 'https://d37kg2ecsrm74.cloudfront.net/web/ikea4/images/382/0238233_PE377690_S5.jpg',
 		descr: 'Супер стул',
-		price: 300,
+		price: 200,
 		available: true
 	},
 	{
@@ -12,7 +12,7 @@ const data = [
 		title: 'Стул 2',
 		image: 'https://d37kg2ecsrm74.cloudfront.net/web/ikea4/images/382/0238233_PE377690_S5.jpg',
 		descr: 'Супер стул',
-		price: 300,
+		price: 100,
 		available: true
 	},
 	{
@@ -22,7 +22,7 @@ const data = [
 		descr: 'Супер стул',
 		price: 300,
 		available: true
-	}
+	},
 ];
 
 export default () => {
