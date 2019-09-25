@@ -152,3 +152,51 @@ ul {
     text-align: center;
   }
 }
+
+.nav {
+  display: flex;
+  justify-content: center;
+
+  &__list {
+    display: flex;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  &__item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 20px;
+    height: 25px;
+
+    margin-right: 10px;
+
+    border: 1px solid #000;
+    border-radius: 2px;
+
+    cursor: pointer;
+
+    &_active {
+      background-color: #000;
+      color: #fff;
+    }
+  }
+}
+
+.sort {
+
+  &__list {
+    display: flex;
+
+    margin-bottom: 20px;
+  }
+
+  &__item {
+    margin-right: 20px;
+  }
+}

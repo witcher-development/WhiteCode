@@ -10,7 +10,7 @@ const getProductTemplate = (product) => `
 				<div class="product__description">${product.descr}</div>
 			</div>
 			<div class="product__body_right">
-				<button class="product__button" data-product-id="${product.id}">Add to cart</button>
+				<button class="product__button" ${!product.available ? 'disabled' : ''} data-product-id="${product.id}">Add to cart</button>
 				<p class="product__counter">
 					Added: 
 					<span class="product__counter-count">${product.count}</span>
@@ -76,6 +76,17 @@ export const renderCart = (products, totalPrice) => {
 	document.querySelector('.sidebar__price').innerHTML = totalPrice + '$';
 };
 
-export const renderNavigation = (currentPage) => {
-	document.querySelector('.nav__item').innerHTML = currentPage + 1;
+const getNavigationItem = (page, isCurrent) => `
+	<li class="nav__item ${isCurrent ? 'nav__item_active' : ''}" data-page="${page}">${page}</li>
+`;
+
+export const renderNavigation = (currentPage, pageCount) => {
+
+	let navListInner = [];
+
+	for (let i = 1; i <= pageCount; i++) {
+		navListInner.push(getNavigationItem(i, +currentPage === +i));
+	}
+
+	document.querySelector('.nav__list').innerHTML = navListInner.join('');
 };
